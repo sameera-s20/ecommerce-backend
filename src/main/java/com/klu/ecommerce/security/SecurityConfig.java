@@ -23,12 +23,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf().disable()  // 🔹 Disable CSRF for API requests
-            .authorizeHttpRequests()
-            .antMatchers("/auth/**", "/api/products/**", "/api/payments/**").permitAll()
-            .anyRequest().authenticated()
-            .and()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+            .csrf(csrf -> csrf.disable())  // ✅ new lambda syntax
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/auth/", "/api/products/", "/api/payments/").permitAll()
+                .anyRequest().authenticated()
+            )
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            );
+
         return http.build();
     }
 
